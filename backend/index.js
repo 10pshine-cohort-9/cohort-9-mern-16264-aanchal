@@ -1,6 +1,9 @@
 const express = require('express');
 const cors = require('cors');
-require('dotenv').config();
+const dotenv = require('dotenv');
+const connectDB = require('./config/db');
+
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -12,6 +15,11 @@ app.get('/', (req, res) => {
   res.send('Backend server is running!');
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+const startServer = async () => {
+  await connectDB();
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+};
+
+startServer();
