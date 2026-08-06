@@ -33,7 +33,7 @@ const signup = async (req, res) => {
       token: generateToken(user._id),
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 
@@ -61,15 +61,19 @@ const login = async (req, res) => {
       token: generateToken(user._id),
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 
 // @desc    Logout user
 // @route   POST /api/auth/logout
-// @access  Public
-const logout = (req, res) => {
-  res.status(200).json({ message: 'Logged out successfully' });
+// @access  Protected
+const logout = async (req, res) => {
+  try {
+    res.status(200).json({ message: 'Logged out successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error' });
+  }
 };
 
 module.exports = { signup, login, logout };
