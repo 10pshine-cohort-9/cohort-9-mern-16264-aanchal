@@ -73,11 +73,13 @@ const updateNote = async (req, res) => {
       return res.status(401).json({ message: 'Not authorized' });
     }
 
-    const updatedNote = await Note.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
-    );
+    const { title, content } = req.body;
+
+const updatedNote = await Note.findByIdAndUpdate(
+  req.params.id,
+  { title, content },
+  { new: true, runValidators: true }
+);
 
     res.status(200).json(updatedNote);
   } catch (error) {
