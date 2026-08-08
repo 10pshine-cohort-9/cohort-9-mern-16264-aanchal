@@ -37,10 +37,15 @@ app.get('/', (req, res) => {
 app.use(errorHandler);
 
 const startServer = async () => {
-  await connectDB();
-  app.listen(PORT, () => {
-    logger.info(`Server is running on port ${PORT}`);
-  });
+  try {
+    await connectDB();
+    app.listen(PORT, () => {
+      logger.info(`Server is running on port ${PORT}`);
+    });
+  } catch (error) {
+    logger.error(`Server startup failed: ${error.message}`);
+    process.exit(1);
+  }
 };
 
 startServer();

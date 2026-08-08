@@ -10,8 +10,10 @@ const errorHandler = (err, req, res, next) => {
     url: req.url,
   });
 
+  const isClientError = statusCode >= 400 && statusCode < 500;
+
   res.status(statusCode).json({
-    message: err.message || 'Internal server error',
+    message: isClientError ? err.message : 'Internal server error',
     stack: process.env.NODE_ENV === 'production' ? null : err.stack,
   });
 };
