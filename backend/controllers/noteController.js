@@ -1,4 +1,7 @@
 const Note = require('../models/Note');
+const mongoose = require('mongoose');
+
+const isValidId = (id) => mongoose.Types.ObjectId.isValid(id);
 
 // @desc    get all notes for logged in user
 // @route   Get /api/notes
@@ -16,7 +19,11 @@ const getNotes = async (req, res) => {
 // @route   GET /api/notes/:id
 // @access  Protected
 const getNoteById = async (req, res) => {
-  try {
+  try { 
+    if (!isValidId(req.params.id)) {
+  return res.status(400).json({ message: 'Invalid note ID' });
+}
+    
     const note = await Note.findById(req.params.id);
 
     if (!note) {
@@ -62,6 +69,9 @@ const createNote = async (req, res) => {
 // @access  protected
 const updateNote = async (req, res) => {
   try {
+    if (!isValidId(req.params.id)) {
+  return res.status(400).json({ message: 'Invalid note ID' });
+}
     const note = await Note.findById(req.params.id);
 
     if (!note) {
@@ -92,6 +102,9 @@ const updatedNote = await Note.findByIdAndUpdate(
 // @access  Protected
 const deleteNote = async (req, res) => {
   try {
+    if (!isValidId(req.params.id)) {
+  return res.status(400).json({ message: 'Invalid note ID' });
+}
     const note = await Note.findById(req.params.id);
 
     if (!note) {
