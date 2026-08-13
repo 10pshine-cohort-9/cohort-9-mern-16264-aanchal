@@ -1,14 +1,19 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/layout/Navbar';
 import ProtectedRoute from './components/routing/ProtectedRoute';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import DashboardPage from './pages/DashboardPage';
 
-const App = () => {
+const AppContent = () => {
+  const location = useLocation();
+  const authPages = ['/login', '/signup'];
+  const showNavbar = !authPages.includes(location.pathname);
+
   return (
-    <Router>
-      <Navbar />
+    <>
+      {showNavbar && <Navbar />}
       <div className="container">
         <Routes>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
@@ -21,7 +26,17 @@ const App = () => {
           } />
         </Routes>
       </div>
-    </Router>
+    </>
+  );
+};
+
+const App = () => {
+  return (
+    <AuthProvider>
+      <Router>
+        <AppContent />
+      </Router>
+    </AuthProvider>
   );
 };
 
