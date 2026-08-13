@@ -1,15 +1,17 @@
 import { useState } from 'react';
 
-const InputField = ({ label, type = 'text', placeholder, value, onChange, icon }) => {
+const InputField = ({ label, type = 'text', placeholder, value, onChange, icon, id }) => {
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = type === 'password';
+  const inputId = id || label.toLowerCase().replace(/\s/g, '-');
 
   return (
     <div style={styles.wrapper}>
-      <label style={styles.label}>{label}</label>
+      <label htmlFor={inputId} style={styles.label}>{label}</label>
       <div style={styles.inputContainer}>
         <span style={styles.icon}>{icon}</span>
         <input
+          id={inputId}
           type={isPassword && showPassword ? 'text' : type}
           placeholder={placeholder}
           value={value}
@@ -17,12 +19,14 @@ const InputField = ({ label, type = 'text', placeholder, value, onChange, icon }
           style={styles.input}
         />
         {isPassword && (
-          <span
-            style={styles.eyeIcon}
+          <button
+            type="button"
+            style={styles.eyeButton}
             onClick={() => setShowPassword(!showPassword)}
+            aria-label={showPassword ? 'Hide password' : 'Show password'}
           >
             {showPassword ? '🙈' : '👁️'}
-          </span>
+          </button>
         )}
       </div>
     </div>
@@ -62,9 +66,12 @@ const styles = {
     backgroundColor: 'transparent',
     color: '#171717',
   },
-  eyeIcon: {
+  eyeButton: {
+    background: 'none',
+    border: 'none',
     cursor: 'pointer',
     fontSize: '16px',
+    padding: '0',
   },
 };
 
