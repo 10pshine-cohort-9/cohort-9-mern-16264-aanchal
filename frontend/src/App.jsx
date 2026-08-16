@@ -8,8 +8,8 @@ import DashboardPage from './pages/DashboardPage';
 
 const AppContent = () => {
   const location = useLocation();
-  const authPages = ['/login', '/signup'];
-  const showNavbar = !authPages.includes(location.pathname);
+  const hideNavbarPages = ['/login', '/signup', '/dashboard'];
+  const showNavbar = !hideNavbarPages.includes(location.pathname) && !location.pathname.startsWith('/editor');
 
   return (
     <>
@@ -24,12 +24,16 @@ const AppContent = () => {
               <DashboardPage />
             </ProtectedRoute>
           } />
+          <Route path="/editor/:id" element={
+            <ProtectedRoute>
+              <div>Note Editor Coming in PR #10</div>
+            </ProtectedRoute>
+          } />
         </Routes>
       </div>
     </>
   );
 };
-
 const App = () => {
   return (
     <AuthProvider>
