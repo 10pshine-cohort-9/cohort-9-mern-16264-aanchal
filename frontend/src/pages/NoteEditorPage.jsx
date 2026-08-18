@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
-import { useAuth } from '../context/AuthContext';
 import notesApi from '../api/notesApi';
 import Sidebar from '../components/dashboard/Sidebar';
 
@@ -23,6 +22,7 @@ const NoteEditorPage = () => {
 
   useEffect(() => {
     if (quillRef.current) return;
+
     const quill = new Quill(editorRef.current, {
       theme: 'snow',
       placeholder: 'Start writing your note...',
@@ -38,11 +38,21 @@ const NoteEditorPage = () => {
     });
     quillRef.current = quill;
 
-    if (isEditing && location.state?.note) {
-      const note = location.state.note;
-      setTitle(note.title);
-      quill.root.innerHTML = note.content;
-    }
+    const loadNote = async () => {
+      if (!isEditing) return;
+      try {
+        let note = location.state?.note;
+        if (!note) {
+          note = await notesApi.getNoteById(token, id);
+        }
+        setTitle(note.title);
+        quill.clipboard.dangerouslyPasteHTML(note.content ?? '');
+      } catch (err) {
+        setError('Failed to load note');
+      }
+    };
+
+    loadNote();
   }, []);
 
   const handleSave = async () => {

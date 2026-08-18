@@ -47,4 +47,13 @@ const deleteNote = async (token, id) => {
   }
 };
 
-export default { getNotes, createNote, updateNote, deleteNote };
+const getNoteById = async (token, id) => {
+  try {
+    const response = await axios.get(`${API_URL}/${id}`, authHeader(token));
+    return response.data;
+  } catch (error) {
+    normalizeError(error);
+  }
+};
+
+export default { getNotes, getNoteById, createNote, updateNote, deleteNote };
