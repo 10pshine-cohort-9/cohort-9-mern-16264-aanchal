@@ -5,6 +5,7 @@ import ProtectedRoute from './components/routing/ProtectedRoute';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import DashboardPage from './pages/DashboardPage';
+import NoteEditorPage from './pages/NoteEditorPage';
 
 const AppContent = () => {
   const location = useLocation();
@@ -25,10 +26,10 @@ const AppContent = () => {
             </ProtectedRoute>
           } />
           <Route path="/editor/:id" element={
-            <ProtectedRoute>
-              <div>Note Editor Coming in PR #10</div>
-            </ProtectedRoute>
-          } />
+    <ProtectedRoute>
+      <NoteEditorPage />
+    </ProtectedRoute>
+  } />
         </Routes>
       </div>
     </>

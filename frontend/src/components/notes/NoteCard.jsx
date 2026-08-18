@@ -18,6 +18,11 @@ const formatDate = (dateString) => {
 };
 
 const NoteCard = ({ note, index, onEdit, onDelete }) => {
+  const stripHtml = (html) => {
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  return tmp.textContent || tmp.innerText || '';
+};
   const [menuOpen, setMenuOpen] = useState(false);
   const color = cardColors[index % cardColors.length];
 
@@ -35,24 +40,26 @@ const NoteCard = ({ note, index, onEdit, onDelete }) => {
           {menuOpen && (
             <div style={styles.dropdown}>
               <button
-                style={styles.dropdownItem}
-                onClick={() => { onEdit(note); setMenuOpen(false); }}
-              >
-                ✏️ Edit
-              </button>
-              <button
-                style={{ ...styles.dropdownItem, color: '#E53E3E' }}
-                onClick={() => { onDelete(note._id); setMenuOpen(false); }}
-              >
-                🗑️ Delete
-              </button>
+  style={styles.dropdownItem}
+  onClick={() => { onEdit(note); setMenuOpen(false); }}
+>
+  Edit
+</button>
+<button
+  style={{ ...styles.dropdownItem, color: '#E53E3E' }}
+  onClick={() => { onDelete(note._id); setMenuOpen(false); }}
+>
+  Delete
+</button>
             </div>
           )}
         </div>
       </div>
       <p style={styles.content}>
-        {note.content.length > 100 ? `${note.content.substring(0, 100)}...` : note.content}
-      </p>
+  {stripHtml(note.content).length > 100
+    ? `${stripHtml(note.content).substring(0, 100)}...`
+    : stripHtml(note.content)}
+</p>
       <p style={styles.date}>{formatDate(note.createdAt)}</p>
     </div>
   );
