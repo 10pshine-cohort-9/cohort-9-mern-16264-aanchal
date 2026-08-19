@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 const cardColors = [
   { bg: '#FFF3E0', border: '#FFB347' },
@@ -17,15 +17,33 @@ const formatDate = (dateString) => {
   });
 };
 
+const stripHtml = (html) => {
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  return tmp.textContent || tmp.innerText || '';
+};
+
 const NoteCard = ({ note, index, onEdit, onDelete }) => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef(null);
   const color = cardColors[index % cardColors.length];
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   return (
     <div style={{ ...styles.card, backgroundColor: color.bg, borderTop: `3px solid ${color.border}` }}>
       <div style={styles.cardHeader}>
         <h3 style={styles.title}>{note.title}</h3>
-        <div style={styles.menuWrapper}>
+        <div style={styles.menuWrapper} ref={menuRef}>
           <button
             style={styles.menuBtn}
             onClick={() => setMenuOpen(!menuOpen)}
@@ -38,20 +56,22 @@ const NoteCard = ({ note, index, onEdit, onDelete }) => {
                 style={styles.dropdownItem}
                 onClick={() => { onEdit(note); setMenuOpen(false); }}
               >
-                ✏️ Edit
+                Edit
               </button>
               <button
                 style={{ ...styles.dropdownItem, color: '#E53E3E' }}
                 onClick={() => { onDelete(note._id); setMenuOpen(false); }}
               >
-                🗑️ Delete
+                Delete
               </button>
             </div>
           )}
         </div>
       </div>
       <p style={styles.content}>
-        {note.content.length > 100 ? `${note.content.substring(0, 100)}...` : note.content}
+        {stripHtml(note.content).length > 100
+          ? `${stripHtml(note.content).substring(0, 100)}...`
+          : stripHtml(note.content)}
       </p>
       <p style={styles.date}>{formatDate(note.createdAt)}</p>
     </div>
