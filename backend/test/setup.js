@@ -1,11 +1,12 @@
+
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 
 dotenv.config();
 
 before(async () => {
-  await mongoose.connect(process.env.MONGO_URI);
-  
+  const testUri = process.env.MONGO_URI.replace('notesapp', 'notesapp_test');
+  await mongoose.connect(testUri);
   await mongoose.connection.db.dropDatabase();
 });
 
