@@ -5,13 +5,18 @@ import notesApi from '../api/notesApi';
 import Sidebar from '../components/dashboard/Sidebar';
 import DashboardHeader from '../components/dashboard/DashboardHeader';
 import NotesList from '../components/notes/NotesList';
+import SearchBar from '../components/dashboard/SearchBar';
+import Toast from '../components/ui/Toast';
+import ConfirmDialog from '../components/ui/ConfirmDialog';
 
 const DashboardPage = () => {
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [toast, setToast] = useState(null);
+  const [confirmDialog, setConfirmDialog] = useState(null);
 
-  const { user } = useAuth();
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
 
@@ -35,18 +40,34 @@ const DashboardPage = () => {
     navigate(`/editor/${note._id}`, { state: { note } });
   };
 
-  const handleDelete = async (id) => {
+  const handleDeleteClick = (id) => {
+    setConfirmDialog({
+      message: 'Are you sure you want to delete this note? This action cannot be undone.',
+      noteId: id,
+    });
+  };
+
+  const handleDeleteConfirm = async () => {
     try {
-      await notesApi.deleteNote(token, id);
-      setNotes(notes.filter((note) => note._id !== id));
+      await notesApi.deleteNote(token, confirmDialog.noteId);
+      setNotes(notes.filter((note) => note._id !== confirmDialog.noteId));
+      setConfirmDialog(null);
+      setToast({ message: 'Note deleted successfully', type: 'success' });
     } catch (err) {
-      setError('Failed to delete note');
+      setConfirmDialog(null);
+      setToast({ message: 'Failed to delete note', type: 'error' });
     }
   };
 
   const handleCreateNote = () => {
     navigate('/editor/new');
   };
+
+  const filteredNotes = notes.filter(
+    (note) =>
+      note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      note.content.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div style={styles.page}>
@@ -57,29 +78,56 @@ const DashboardPage = () => {
           <div style={styles.contentHeader}>
             <div>
               <h1 style={styles.heading}>All Notes</h1>
-              <p style={styles.subheading}>{notes.length} notes</p>
+              <p style={styles.subheading}>
+                {searchTerm
+                  ? `${filteredNotes.length} results for "${searchTerm}"`
+                  : `${notes.length} notes`}
+              </p>
             </div>
-            <button
-              style={styles.createBtn}
-              onClick={handleCreateNote}
-              onMouseEnter={(e) => e.target.style.backgroundColor = '#C95F00'}
-              onMouseLeave={(e) => e.target.style.backgroundColor = '#E87500'}
-            >
-              + Create Note
-            </button>
+            <div style={styles.headerRight}>
+              <SearchBar
+                searchTerm={searchTerm}
+                onSearch={setSearchTerm}
+              />
+              <button
+                style={styles.createBtn}
+                onClick={handleCreateNote}
+                onMouseEnter={(e) => e.target.style.backgroundColor = '#C95F00'}
+                onMouseLeave={(e) => e.target.style.backgroundColor = '#E87500'}
+              >
+                + Create Note
+              </button>
+            </div>
           </div>
           {error && <p style={styles.error}>{error}</p>}
           {loading ? (
             <p style={styles.loading}>Loading notes...</p>
           ) : (
             <NotesList
-              notes={notes}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-            />
+  notes={filteredNotes}
+  onEdit={handleEdit}
+  onDelete={handleDeleteClick}
+  searchTerm={searchTerm}
+/>
           )}
         </div>
       </div>
+
+      {confirmDialog && (
+        <ConfirmDialog
+          message={confirmDialog.message}
+          onConfirm={handleDeleteConfirm}
+          onCancel={() => setConfirmDialog(null)}
+        />
+      )}
+
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
     </div>
   );
 };
@@ -116,6 +164,11 @@ const styles = {
     color: '#666666',
     margin: '4px 0 0 0',
   },
+  headerRight: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '16px',
+  },
   createBtn: {
     padding: '12px 24px',
     backgroundColor: '#E87500',
@@ -126,6 +179,7 @@ const styles = {
     fontWeight: '600',
     cursor: 'pointer',
     transition: 'background-color 0.2s ease',
+    fontFamily: 'Poppins, sans-serif',
   },
   error: {
     color: '#E53E3E',
