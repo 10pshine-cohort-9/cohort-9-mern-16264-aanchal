@@ -1,10 +1,6 @@
-describe('stripHtml', () => {
-  const stripHtml = (html) => {
-    const tmp = document.createElement('div');
-    tmp.innerHTML = html;
-    return tmp.textContent || tmp.innerText || '';
-  };
+import { stripHtml, formatDate } from '../../components/notes/NoteCard';
 
+describe('stripHtml', () => {
   it('should strip HTML tags and return plain text', () => {
     expect(stripHtml('<p>Hello World</p>')).toBe('Hello World');
   });
@@ -23,14 +19,6 @@ describe('stripHtml', () => {
 });
 
 describe('formatDate', () => {
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
-  };
-
   it('should format date correctly', () => {
     const result = formatDate('2026-08-13T00:00:00.000Z');
     expect(result).toMatch(/Aug/);
