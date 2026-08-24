@@ -9,7 +9,7 @@ const cardColors = [
   { bg: '#FFF5F5', border: '#FC8181' },
 ];
 
-const formatDate = (dateString) => {
+ export const formatDate = (dateString) => {
   return new Date(dateString).toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
@@ -17,7 +17,7 @@ const formatDate = (dateString) => {
   });
 };
 
-const stripHtml = (html) => {
+export const stripHtml = (html) => {
   const tmp = document.createElement('div');
   tmp.innerHTML = html;
   return tmp.textContent || tmp.innerText || '';
