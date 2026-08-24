@@ -21,6 +21,7 @@ const NoteEditorPage = () => {
   const token = localStorage.getItem('token');
   const isEditing = id !== 'new';
   const [toast, setToast] = useState(null);
+  const [saved, setSaved] = useState(false);
 
   useEffect(() => {
     if (quillRef.current) return;
@@ -58,6 +59,7 @@ const NoteEditorPage = () => {
   }, []);
 
   const handleSave = async () => {
+    if (saved) return;
     const content = quillRef.current.root.innerHTML;
 
     if (!title.trim()) {
@@ -80,15 +82,18 @@ const NoteEditorPage = () => {
         await notesApi.createNote(token, title, content);
       }
 
+      setSaved(true);
       setToast({ message: isEditing ? 'Note updated successfully!' : 'Note saved successfully!', type: 'success' });
-setTimeout(() => navigate('/dashboard'), 1500);
-
+      const timer = setTimeout(() => navigate('/dashboard'), 1500);
+      return () => clearTimeout(timer);
     } catch (err) {
       setError(err.message || 'Failed to save note');
     } finally {
       setLoading(false);
     }
   };
+
+
 
   return (
     <div style={styles.page}>

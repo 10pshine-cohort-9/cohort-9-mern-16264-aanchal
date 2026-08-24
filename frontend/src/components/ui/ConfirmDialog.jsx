@@ -1,11 +1,36 @@
+import { useEffect, useRef } from 'react';
+
 const ConfirmDialog = ({ message, onConfirm, onCancel }) => {
+  const cancelBtnRef = useRef(null);
+
+  useEffect(() => {
+    cancelBtnRef.current?.focus();
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onCancel();
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [onCancel]);
+
   return (
-    <div style={styles.overlay}>
+    <div
+      style={styles.overlay}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="dialog-title"
+      aria-describedby="dialog-message"
+    >
       <div style={styles.dialog}>
-        <h3 style={styles.title}>Delete Note</h3>
-        <p style={styles.message}>{message}</p>
+        <h3 id="dialog-title" style={styles.title}>Delete Note</h3>
+        <p id="dialog-message" style={styles.message}>{message}</p>
         <div style={styles.actions}>
-          <button style={styles.cancelBtn} onClick={onCancel}>
+          <button
+            ref={cancelBtnRef}
+            style={styles.cancelBtn}
+            onClick={onCancel}
+          >
             Cancel
           </button>
           <button style={styles.confirmBtn} onClick={onConfirm}>
