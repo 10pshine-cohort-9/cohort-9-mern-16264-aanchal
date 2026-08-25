@@ -4,6 +4,7 @@ import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
 import notesApi from '../api/notesApi';
 import Sidebar from '../components/dashboard/Sidebar';
+import Toast from '../components/ui/Toast';
 
 const NoteEditorPage = () => {
   const [title, setTitle] = useState('');
@@ -19,6 +20,8 @@ const NoteEditorPage = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
   const isEditing = id !== 'new';
+  const [toast, setToast] = useState(null);
+  const [saved, setSaved] = useState(false);
 
   useEffect(() => {
     if (quillRef.current) return;
@@ -56,6 +59,7 @@ const NoteEditorPage = () => {
   }, []);
 
   const handleSave = async () => {
+    if (saved) return;
     const content = quillRef.current.root.innerHTML;
 
     if (!title.trim()) {
@@ -78,13 +82,18 @@ const NoteEditorPage = () => {
         await notesApi.createNote(token, title, content);
       }
 
-      navigate('/dashboard');
+      setSaved(true);
+      setToast({ message: isEditing ? 'Note updated successfully!' : 'Note saved successfully!', type: 'success' });
+      const timer = setTimeout(() => navigate('/dashboard'), 1500);
+      return () => clearTimeout(timer);
     } catch (err) {
       setError(err.message || 'Failed to save note');
     } finally {
       setLoading(false);
     }
   };
+
+
 
   return (
     <div style={styles.page}>
@@ -120,6 +129,13 @@ const NoteEditorPage = () => {
           </div>
         </div>
       </div>
+      {toast && (
+  <Toast
+    message={toast.message}
+    type={toast.type}
+    onClose={() => setToast(null)}
+  />
+)}
     </div>
   );
 };
@@ -198,6 +214,8 @@ const styles = {
     cursor: 'pointer',
     fontFamily: 'Poppins, sans-serif',
   },
+
+  
 };
 
 export default NoteEditorPage;

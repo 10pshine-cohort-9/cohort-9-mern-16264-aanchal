@@ -1,6 +1,16 @@
 import NoteCard from './NoteCard';
 
-const NotesList = ({ notes, onEdit, onDelete }) => {
+const NotesList = ({ notes, onEdit, onDelete, searchTerm }) => {
+  if (notes.length === 0 && searchTerm) {
+    return (
+      <div style={styles.emptyState}>
+        
+        <h3 style={styles.emptyTitle}>No results found</h3>
+        <p style={styles.emptyText}>No notes found for "{searchTerm}"</p>
+      </div>
+    );
+  }
+
   if (notes.length === 0) {
     return (
       <div style={styles.emptyState}>

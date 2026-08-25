@@ -2,17 +2,13 @@ import logo from '../../assets/logo.png';
 
 const LeafIllustration = () => (
   <svg width="90" height="100" viewBox="0 0 90 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-    {/* Main stem */}
     <path d="M45 95 C45 70, 45 45, 45 15" stroke="#E87500" strokeWidth="2" strokeLinecap="round"/>
-    {/* Left leaves */}
     <path d="M45 75 C35 68, 20 65, 15 55 C25 52, 38 58, 45 75Z" fill="#FFB347" opacity="0.8"/>
     <path d="M45 55 C32 48, 18 42, 15 30 C28 28, 40 38, 45 55Z" fill="#E87500" opacity="0.7"/>
     <path d="M45 35 C35 28, 22 22, 20 12 C32 10, 42 22, 45 35Z" fill="#FFB347" opacity="0.6"/>
-    {/* Right leaves */}
     <path d="M45 65 C55 58, 70 55, 75 45 C65 42, 52 48, 45 65Z" fill="#E87500" opacity="0.7"/>
     <path d="M45 45 C58 38, 72 32, 75 20 C62 18, 50 28, 45 45Z" fill="#FFB347" opacity="0.8"/>
     <path d="M45 25 C55 18, 68 12, 70 2 C58 0, 48 12, 45 25Z" fill="#E87500" opacity="0.6"/>
-    {/* Leaf veins */}
     <path d="M45 75 C35 68, 20 65, 15 55" stroke="#C95F00" strokeWidth="0.8" opacity="0.4"/>
     <path d="M45 55 C32 48, 18 42, 15 30" stroke="#C95F00" strokeWidth="0.8" opacity="0.4"/>
     <path d="M45 65 C55 58, 70 55, 75 45" stroke="#C95F00" strokeWidth="0.8" opacity="0.4"/>
@@ -51,7 +47,6 @@ const Sidebar = ({ totalNotes }) => {
 
       <div style={styles.totalCard}>
         <div style={styles.totalLeft}>
-          <span style={styles.totalIconOrange}>📝</span>
           <div>
             <p style={styles.totalLabel}>Total Notes</p>
             <p style={styles.totalSubtext}>Keep writing, keep growing.</p>
@@ -143,8 +138,8 @@ const styles = {
   },
   leafWrapper: {
     position: 'absolute',
-    bottom: '-5px',
-    right: '-5px',
+    bottom: '-10px',
+    right: '-10px',
     opacity: 0.7,
   },
   totalCard: {
@@ -158,11 +153,7 @@ const styles = {
   totalLeft: {
     display: 'flex',
     alignItems: 'center',
-    gap: '8px',
-  },
-  totalIconOrange: {
-    fontSize: '22px',
-    color: '#E87500',
+    gap: '4px',
   },
   totalLabel: {
     fontSize: '13px',

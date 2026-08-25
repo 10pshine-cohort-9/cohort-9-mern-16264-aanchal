@@ -6,7 +6,10 @@ dotenv.config();
 before(async () => {
   try {
     const testUri = process.env.MONGO_URI.replace('/?appName=Cluster0', '/notesapp_test?appName=Cluster0');
-if (!testUri) throw new Error('TEST_MONGO_URI is not defined');
+    const dbName = new URL(testUri).pathname.slice(1).split('?')[0];
+    if (dbName !== 'notesapp_test') {
+      throw new Error(`Refusing to use non-test database: ${dbName}`);
+    }
     await mongoose.connect(testUri);
     await mongoose.connection.db.dropDatabase();
   } catch (error) {
