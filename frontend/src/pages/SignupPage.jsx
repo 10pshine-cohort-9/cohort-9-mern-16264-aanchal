@@ -41,8 +41,8 @@ const SignupPage = () => {
       await signup(name, email, password);
       navigate('/dashboard', { replace: true });
     } catch (err) {
-      setError(err.response?.data?.message || 'Signup failed. Please try again.');
-    } finally {
+  setError(err.message || 'Signup failed. Please try again.');
+} finally {
       setLoading(false);
     }
   };
